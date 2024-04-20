@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<!--
+	Dopetrope by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<body>
+		<section id="contacts-header">
+			<div><a href="mailto: gunnarmagnum@gmail.com">gunnarmagnum@gmail.com</a></div>
+			<div><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/in/gunnar-magnussen-2b2701197/"><span class="label">LinkedIn</span></a></div>
+			<div><a class="icon brands fa-github" href="https://github.com/Raestkjoot"><span class="label">GitHub</span></a></div>
+		</section>
+	</body>
+	<head>
+		<title>Gunnar Magnussen Portfolio</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="no-sidebar is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+			<section id="header">
+						
+				<!-- Banner -->
+					<header>
+						<h1><a href="index.html">Gunnar Magnussen</a></h1>
+						<p> <b>Game Programmer</b> | Gameplay, graphics and general game development.</p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="index.html">Projects</a></li>
+							<li><a href="education.html">Experience & Education</a>
+							<li><a href="about-me.html">About Me</a></li>
+						</ul>
+					</nav>
+
+				</section>
+
+			<!-- Main -->
+				<section id="main">
+					<div class="container">
+
+						<!-- Content -->
+							<article class="box post">
+								<a class="image featured"><img src="images/PRAX.jpg" alt="" /></a>
+								<header>
+									<h2>PRAX</h2>
+									<p><a href="https://github.com/Stribe02/Project-VI" target="_blank">Source</a></p>
+								</header>
+								<p>
+									This game was for the course Making Games, part of the MSc in Games education. 
+									We were a team of 6 people, 3 of us were programmers, my roles were programmer and art lead. 
+								</p>
+								<p>
+									The game is inspired by games like N++ or Super Meat Boy, that offer the player a fun and polished 
+									movement system in short challenging levels. The player is expected to try the same level over and 
+									over again until they succeed. Making sure the player movement felt good and responsive was foundational 
+									to making our game fun.
+								</p>
+								<iframe width="560" height="315" src="https://www.youtube.com/embed/aqJeda9xJLM?si=wRF5ftpfOS4Pok7O" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+								<p></p>
+							<h3>Player Movement</h3>
+								<p>We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input, which can feel and look too rigid, so the rigid movement was balanced out with smooth visuals.</p>
+								<p>The robot rotates to face the direction it is moving, this helps to make the direction it is going very clear to the player. This is a smooth rotation, which helps to offset the rigidity of the positional movement. So, for example, if the robot is facing to the left and the player moves to the right for just one frame, the robot will move right only in that frame, but the mesh will rotate smoothly over multiple frames until it faces towards the right.</p>
+								<img src="images/prax-rotation.gif"/>
+								<p>Another way we add smoothness is by making the robot tilt forwards when moving. This also helps to show the player how fast they are going, which is especially important when using a joystick controller.</p>
+								<img src="images/prax-tilt.gif"/>
+								<p>The robot has a dash ability that quickly moves them forwards with greater speed. For the dash effect I chose to use a trail renderer and a sprite animation for the thrusters. This works really well, since if the trail renderer doesn’t show, like when dashing against a wall, the sprite animation will still show, giving the player feedback that, even without movement, they did indeed dash.</p>
+								<img src="images/prax-dash.gif"/>
+								<img src="images/prax-dash-blocked.gif"/>
+								<p></p>
+							<h3>Outline Shader</h3>
+								<p>For our game we use an outline shader to give it a more unique style. The outline also helps us get away with using simple colors and shapes.</p>
+								<p>We use an edge detection algorithm that tells us where to draw the outlines. For this we used the Robert’s Cross operator, which compares the left and right pixels, and then the above and below pixels. The vertical difference and horizontal difference are summed together and compared to a threshold to see if it is an edge. For example, if we have a gray background and a yellow character, when we get to a pixel on the edge between the character and the background, it will compare the grey and the yellow colors and find that there is an edge.</p>
+								<img width="15%" src="images/roberts-cross.jpg"/>
+								<p>There is a more accurate operator, called the Sobel operator. It works in a similar fashion, but also includes the diagonal pixels, comparing three pixels on each side, instead of only one, and applies weights based on how close a sample pixel is to the source pixel. Sobel is more accurate than Robert’s Cross, but also more computationally expensive. Therefore, I started with Robert’s Cross for simplicity and performance, and when the result was good enough, I decided that there was no reason to switch to Sobel.</p>
+								<img width="15%" src="images/sobel.jpg"/>
+								<p>Only using the color of pixels is not enough to detect all edges, we use multiple samples to make sure we don’t miss an edge. Each sample has some strengths and weaknesses, so by combining them, we can more reliably detect edges. Besides color, we use the normals, which tells us what direction a surface is facing, and the depth, which tells us how close a pixel is to the camera. When we use the robert’s cross operator on each of these samples we get a pretty reliable result.</p>
+								<img width="90%" src="images/outline-samples.jpg"/>
+							</article>
+						</div>
+						<div class="col-12">
+
+			<!-- Footer -->
+		<div class="container" style="margin-top: 1.25cm;">
+		</header>
+		<ul class="social">
+			<li><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/in/gunnar-magnussen-2b2701197/"><span class="label">LinkedIn</span></a></li>
+			<li><a class="icon brands fa-github" href="https://github.com/Raestkjoot"><span class="label">GitHub</span></a></li>
+			<p>
+				<p><b>Mail: </b><a href="mailto: gunnarmagnum@gmail.com">gunnarmagnum@gmail.com</a></p>
+			
+				<p><b>Location: </b>Copenhagen, Denmark</p>
+			</p>
+		</ul>
+	</section>
+</div>
+<div class="col-12">
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<ul class="links">
+				<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</div>
+
+</div>
+</div>
+</div>
+</section>
+
+</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

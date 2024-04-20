@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<!--
+	Dopetrope by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<body>
+		<section id="contacts-header">
+			<div><a href="mailto: gunnarmagnum@gmail.com">gunnarmagnum@gmail.com</a></div>
+			<div><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/in/gunnar-magnussen-2b2701197/"><span class="label">LinkedIn</span></a></div>
+			<div><a class="icon brands fa-github" href="https://github.com/Raestkjoot"><span class="label">GitHub</span></a></div>
+		</section>
+	</body>
+	<head>
+		<title>Gunnar Magnussen Portfolio</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="no-sidebar is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+			<section id="header">
+						
+				<!-- Banner -->
+					<header>
+						<h1><a href="index.html">Gunnar Magnussen</a></h1>
+						<p> <b>Game Programmer</b> | Gameplay, graphics and general game development.</p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="index.html">Projects</a></li>
+							<li><a href="education.html">Experience & Education</a>
+							<li><a href="about-me.html">About Me</a></li>
+						</ul>
+					</nav>
+
+				</section>
+
+			<!-- Main -->
+				<section id="main">
+					<div class="container">
+
+						<!-- Content -->
+							<article class="box post">
+								<a class="image featured"><img src="images/downwell.jpg" alt="" /></a>
+								<header>
+									<h2>Downspace</h2>
+									<p><a href="https://github.itu.dk/guma/GaProg_Group5" target="_blank">Source</a></p>
+								</header>
+								<p>
+									Downspace was made for the course <i>Game Programming</i>, part of the MSc in Games education. We were a team of 3 programmers.
+								</p>
+								<p>
+									<iframe width="560" height="315" src="https://www.youtube.com/embed/7eOVoH1Au8A?si=I0mRSJX0gWPFveYd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+								</p>
+								<ul>
+									Both the game and the engine are written completely in C++. The game is based on Downwell, a precision platformer.
+									<br>My main tasks were:
+								
+									<li>Player Movement</li>
+									<li>Level Generation</li>
+									<li>Engine modification and optimization</li>
+								</ul>
+							<h3>Player Movement</h3>
+								<p>
+									Downspace is a precision platformer, so a lot of focus was put on the collision and physics working properly. We use very simple physics that would have been easy to implement from the ground up with AABBs and spheres, but one of the requirements for the project was to use a 3rd party physics library. We used Box2D which is a 2D rigid body simulation library. What we needed was very simple collision detection and intersection prevention, not rigid body simulation, so we ended up having to implement some workarounds to make Box2D do what we wanted.
+								</p>
+								<p>
+									In Downspace the ground is made up of a series of blocks. This caused a bug where, when our player character was moving over a series of blocks, they would collide with an internal vertex and generate a horizontal collision normal. This not only messed with our grounded checking, but would also stop the player from moving. Box2D provides a solution in the form of <a href="https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_collision.html" target="_blank">chain shapes</a>, but this would require us to dynamically calculate the outline of our levels and create a series of vertices for the collision chain.
+								</p>
+								<img height="150px" src="images/ghost_collision.png"/>
+								<p><br>
+									To fix the problems, we started by making the player character use a circle collider instead of a box collider. This lets the player move on top of the blocks without getting blocked by the ghost collisions. Then, we needed a solution for checking if the player is grounded. For this, we developed a system that could handle multiple contact points and filter out the ghost collisions.
+								</p>
+								<p>
+									With this the player can move freely on the blocks and we are able to have really reliable grounded checking. When the player attempts to jump, one of three things will happen: Jump, shoot, or nothing. This depends on if the button was pressed and not held, if the player is grounded, coyote time (a short time frame after leaving the ground where we can still jump), and if the player has bullets.
+								</p>
+							<h3>Level Generation</h3>
+								<p>
+									The game has one infinite level populated with blocks for the player to stand on and enemies to eliminate. The infinite level effect is achieved by having three level sections, so there is always a section above and below the player.
+								</p>
+								<img height="300px" src="images/downspace-level-sections.gif"/>
+								<img height="300px" src="images/level_structure.png"/>
+								<p>
+									Each of the three level sections is responsible for the blocks and enemies inside it. The section receives a string representing the layout from the Level class, then it goes through each character and places a block or enemy at a location according to the character's index in the string.
+								</p>
+								<p>
+									The blocks in the level are stored in an object pool. Object pooling is a common design pattern that can help performance when creating and destroying an object is expensive.
+								</p>
+							<h3>Sprite Batching</h3>
+								<p>
+									In the handout code we received, the engine would send each sprite to the GPU in its own draw call. Because of the physical separation between the CPU and the GPU, sending data between them can quickly become a bottleneck. After reworking the engine and sprite renderer component to use sprite batching, we measured the average rendering time to be about 4 times faster.
+								</p>
+							</article>
+						<div class="col-12">
+
+			<!-- Footer -->
+		<div class="container" style="margin-top: 1.25cm;">
+		</header>
+		<ul class="social">
+			<li><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/in/gunnar-magnussen-2b2701197/"><span class="label">LinkedIn</span></a></li>
+			<li><a class="icon brands fa-github" href="https://github.com/Raestkjoot"><span class="label">GitHub</span></a></li>
+			<p>
+				<p><b>Mail: </b><a href="mailto: gunnarmagnum@gmail.com">gunnarmagnum@gmail.com</a></p>
+			
+				<p><b>Location: </b>Copenhagen, Denmark</p>
+			</p>
+		</ul>
+	</section>
+</div>
+<div class="col-12">
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<ul class="links">
+				<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</div>
+
+</div>
+</div>
+</div>
+</section>
+
+</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
