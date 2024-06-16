@@ -57,7 +57,7 @@
 									We were a team of 6 people, 3 of us were programmers, my roles were programmer and art lead. 
 								</p>
 								<p>
-									The game is inspired by games like N++ or Super Meat Boy, that offer the player a fun and polished 
+									The game is inspired by games like N++, that offer the player a fun and polished 
 									movement system in short challenging levels. The player is expected to try the same level over and 
 									over again until they succeed. Making sure the player movement felt good and responsive was foundational 
 									to making our game fun.
@@ -65,22 +65,71 @@
 								<iframe width="560" height="315" src="https://www.youtube.com/embed/aqJeda9xJLM?si=wRF5ftpfOS4Pok7O" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 								<p></p>
 							<h3>Player Movement</h3>
-								<p>We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input, which can feel and look too rigid, so the rigid movement was balanced out with smooth visuals.</p>
-								<p>The robot rotates to face the direction it is moving, this helps to make the direction it is going very clear to the player. This is a smooth rotation, which helps to offset the rigidity of the positional movement. So, for example, if the robot is facing to the left and the player moves to the right for just one frame, the robot will move right only in that frame, but the mesh will rotate smoothly over multiple frames until it faces towards the right.</p>
-								<img src="images/prax-rotation.gif"/>
-								<p>Another way we add smoothness is by making the robot tilt forwards when moving. This also helps to show the player how fast they are going, which is especially important when using a joystick controller.</p>
-								<img src="images/prax-tilt.gif"/>
-								<p>The robot has a dash ability that quickly moves them forwards with greater speed. For the dash effect I chose to use a trail renderer and a sprite animation for the thrusters. This works really well, since if the trail renderer doesn’t show, like when dashing against a wall, the sprite animation will still show, giving the player feedback that, even without movement, they did indeed dash.</p>
-								<img src="images/prax-dash.gif"/>
-								<img src="images/prax-dash-blocked.gif"/>
+								We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input.
+								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Positional movement (simplified)</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">Move</span><span style="color: #f8f8f2">(Vector2</span> <span style="color: #f8f8f2">inputDir)</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #f8f8f2">_controller.Move(_speed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">inputDir);</span>
+<span style="color: #f8f8f2">}</span>
+</pre></div>
+								<p>On its own this can feel and look too rigid, but we balance it out with smooth visuals.</p>
+
+								The robot's rotation does not affect the movement in any way. It is simply a way to show the direction the the player is moving, while also adding to the smoothness.
+								Every update the <span style="color: #a6e22e">UpdateMeshRotation</span> function is called, smoothly rotating the robot towards the last direction of movement.
+								This means that if the robot is facing to the left and the player moves to the right for just one frame, 
+								the robot will move right only in that frame, but the mesh will rotate smoothly over multiple frames until it faces towards the right.
+								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth rotation (simplified)</span>
+<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">UpdateMeshRotation</span><span style="color: #f8f8f2">()</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #f8f8f2">Quaternion</span> <span style="color: #f8f8f2">targetRotation</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Quaternion.LookRotation(_lastMoveDir,</span> <span style="color: #f8f8f2">Vector3.up);</span>
+ 	<span style="color: #f8f8f2">_mesh.rotation</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Quaternion.RotateTowards(</span>
+		<span style="color: #f8f8f2">_mesh.rotation,</span>
+		<span style="color: #f8f8f2">targetRotation,</span>
+		<span style="color: #f8f8f2">_meshRotationSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+<span style="color: #f8f8f2">}</span>
+</pre></div>
+								<img height="200" src="images/prax-rotation.gif"/>
+								<p></p>
+								Another way we add smoothness is by making the robot tilt forwards when moving. This also helps to show the player how fast 
+								they are going, which is especially important when using a joystick controller.
+								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth leaning (simplified)</span>
+<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">UpdateMeshTilt</span><span style="color: #f8f8f2">(</span><span style="color: #66d9ef">float</span> <span style="color: #f8f8f2">normalizedSpeed)</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #75715e">// Lean based on speed</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(normalizedSpeed</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
+		<span style="color: #66d9ef">float</span> <span style="color: #f8f8f2">targetAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">normalizedSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">_maxMeshTiltAngle;</span>
+		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #f8f8f2">targetAngle,</span> 
+		<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+	<span style="color: #75715e">// Lean back if not moving</span>
+	<span style="color: #f8f8f2">}</span> <span style="color: #66d9ef">else</span> <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_curTiltAngle</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
+		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">,</span>
+		<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+	<span style="color: #f8f8f2">}</span>
+  
+	<span style="color: #f8f8f2">_tiltingMesh.localEulerAngles</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #f8f8f2">Vector3(</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">_curTiltAngle,</span> <span style="color: #ae81ff">180.0f</span><span style="color: #f8f8f2">,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">);</span>
+  <span style="color: #f8f8f2">}</span>
+  </pre></div>
+								<img height="200" src="images/prax-tilt.gif"/>
+								<p></p>
+
+								<p>The robot has a dash ability that quickly moves them forwards with greater speed. For the dash effect I chose to use a trail 
+								renderer and a sprite animation for the thrusters. This works really well, since if the trail renderer doesn't show, like when 
+								dashing against a wall, the sprite animation will still show, giving the player feedback that, even without movement, they did indeed dash.</p>
+								<img height="200" src="images/prax-dash.gif"/>
+								<img height="200" src="images/prax-dash-blocked.gif"/>
 								<p></p>
 							<h3>Outline Shader</h3>
-								<p>For our game we use an outline shader to give it a more unique style. The outline also helps us get away with using simple colors and shapes.</p>
-								<p>We use an edge detection algorithm that tells us where to draw the outlines. For this we used the Robert’s Cross operator, which compares the left and right pixels, and then the above and below pixels. The vertical difference and horizontal difference are summed together and compared to a threshold to see if it is an edge. For example, if we have a gray background and a yellow character, when we get to a pixel on the edge between the character and the background, it will compare the grey and the yellow colors and find that there is an edge.</p>
-								<img width="15%" src="images/roberts-cross.jpg"/>
-								<p>There is a more accurate operator, called the Sobel operator. It works in a similar fashion, but also includes the diagonal pixels, comparing three pixels on each side, instead of only one, and applies weights based on how close a sample pixel is to the source pixel. Sobel is more accurate than Robert’s Cross, but also more computationally expensive. Therefore, I started with Robert’s Cross for simplicity and performance, and when the result was good enough, I decided that there was no reason to switch to Sobel.</p>
-								<img width="15%" src="images/sobel.jpg"/>
-								<p>Only using the color of pixels is not enough to detect all edges, we use multiple samples to make sure we don’t miss an edge. Each sample has some strengths and weaknesses, so by combining them, we can more reliably detect edges. Besides color, we use the normals, which tells us what direction a surface is facing, and the depth, which tells us how close a pixel is to the camera. When we use the robert’s cross operator on each of these samples we get a pretty reliable result.</p>
+								<p>We use an outline shader for our game to give it a more unique visual style. 
+									The ouline effect is accomplished using a fullscreen post-processing effect with an edge detection algorithm. 
+									The algorithm we use is called Robert's Cross, which compares the left and right pixels, and then the above and below pixels. 
+									The vertical and horizontal differences are summed together and compared to a threshold to see if the pixel is an edge.</p>
+								<img height="200" src="images/roberts-cross.jpg"/>
+								<p>There is a more accurate operator, called the Sobel operator. 
+									It works in a similar fashion, but also includes the diagonal pixels, comparing three pixels on each side, instead of only one, 
+									and applies weights based on how close a sample pixel is to the source pixel. 
+									Sobel is more accurate than Robert's Cross, but also more computationally expensive. 
+									Therefore, I started with Robert's Cross for simplicity and performance, and when the result was good enough, 
+									I decided that there was no reason to switch to Sobel.</p>
+								<img height="200" src="images/sobel.jpg"/>
+								<p>To compare pixels we sample the color, normal, and depth of each pixel. Each sample has some strengths and weaknesses, 
+									so by combining them, we can more reliably detect edges.</p>
 								<img width="90%" src="images/outline-samples.jpg"/>
 							</article>
 						</div>

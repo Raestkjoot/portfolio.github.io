@@ -1,0 +1,9 @@
+- MSc BSc, don't abbreviate.
+- itugit gives 404
+- Scale up Prax gifs, make sure it works on mobile
+- Mention the engine in the detailed page too
+- Show code
+
+(Code listing)
+http://hilite.me/
+[C++, monokai]
