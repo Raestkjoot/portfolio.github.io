@@ -54,7 +54,7 @@
 								</header>
 								<p>
 									This game was for the course Making Games, part of the MSc in Games education. 
-									We were a team of 6 people, 3 of us were programmers, my roles were programmer and art lead. 
+									We were a team of 6 people, 3 of us were programmers, my roles were programmer and art lead. Made with Unity.
 								</p>
 								<p>
 									The game is inspired by games like N++, that offer the player a fun and polished 
@@ -68,7 +68,7 @@
 								We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input.
 								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Positional movement (simplified)</span>
 <span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">Move</span><span style="color: #f8f8f2">(Vector2</span> <span style="color: #f8f8f2">inputDir)</span> <span style="color: #f8f8f2">{</span>
-	<span style="color: #f8f8f2">_controller.Move(_speed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">inputDir);</span>
+	<span style="color: #f8f8f2">_controller.Move(inputDir</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">_speed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
 <span style="color: #f8f8f2">}</span>
 </pre></div>
 								<p>On its own this can feel and look too rigid, but we balance it out with smooth visuals.</p>
@@ -96,16 +96,16 @@
 	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(normalizedSpeed</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
 		<span style="color: #66d9ef">float</span> <span style="color: #f8f8f2">targetAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">normalizedSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">_maxMeshTiltAngle;</span>
 		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #f8f8f2">targetAngle,</span> 
-		<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+			<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
 	<span style="color: #75715e">// Lean back if not moving</span>
 	<span style="color: #f8f8f2">}</span> <span style="color: #66d9ef">else</span> <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_curTiltAngle</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
 		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">,</span>
-		<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+			<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
 	<span style="color: #f8f8f2">}</span>
   
 	<span style="color: #f8f8f2">_tiltingMesh.localEulerAngles</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #f8f8f2">Vector3(</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">_curTiltAngle,</span> <span style="color: #ae81ff">180.0f</span><span style="color: #f8f8f2">,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">);</span>
-  <span style="color: #f8f8f2">}</span>
-  </pre></div>
+<span style="color: #f8f8f2">}</span>
+</pre></div>
 								<img height="200" src="images/prax-tilt.gif"/>
 								<p></p>
 

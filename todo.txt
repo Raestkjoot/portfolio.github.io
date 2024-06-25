@@ -1,10 +1,11 @@
-[] MSc BSc, don't abbreviate.
+[x] MSc BSc, don't abbreviate.
 [] itugit gives 404
 [x] Scale up Prax gifs, make sure it works on mobile 
 [] Mention the engine in the detailed page too (in "read more")
 [] Show code
 
-[] Move down the hamburger menu on mobile so it doesn't overlap with the email.
+[] Make the menu not become a hamburger menu on smaller screens.
+[] BUG: The hamburger menu on mobile overlaps with the email.
 [] Make "More projects" more distinct on mobile (maybe just make them smaller?)
 
 (Code listing)
