@@ -1,5 +1,5 @@
 [x] MSc BSc, don't abbreviate.
-[] itugit gives 404
+[x] itugit gives 404
 [x] Scale up Prax gifs, make sure it works on mobile 
 [] Mention the engine in the detailed page too (in "read more")
 [] Bullet points in the detailed page? (in "read more")
