@@ -63,12 +63,146 @@
 								</p>
 								<iframe width="560" height="315" src="https://www.youtube.com/embed/7tAOqLuGAuk?si=c4QhHgY8bnHg8fqR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 								<p></p>
-								<h3>Tech Lead</h3>
-								<p>Coming soon...</p>
-								<h3>Tech Art</h3>
-								<p>Coming soon...</p>
 								<h3>Dialogue System</h3>
-								<p>Coming soon...</p>
+								<ul>The dialogue system was designed in close collaboration with the design and narrative team to make sure it could do what we wanted and was easy to work with. 
+									The dialogue system has two types of dialogue:
+
+									<li><b>Scene:</b> A fullscreen dialogue sequence. A dialogue cut-scene.</li>
+									<li><b>In-situ:</b> Ambient dialogue happening during gameplay that allows characters to react to events.</li>
+								</ul>
+								A central dialogue manager can be called from anywhere to play dialogue. This class is instantiated in a bootstrap scene so it is always available.
+								<img height="400" src="images/dialogue_system.png"/>
+								<p>
+									We used scriptable objects to make it easy for the narrative team to build dialogue sequences and add audio files to the appropriate dialogue lines. 
+									The game features fully voiced dialogue, so it was important to have a good way to link the text and audio files together.
+								</p>
+								<img height="250" src="images/dialogue_scene_line.jpg"/>
+								<p>
+									We have a small set of characters that have some character data associated with them (portrait, name and color). 
+									Using an enum the designers could easily choose a character for a dialogue line from a drop-down menu.
+								</p>
+								Here is a code snippet that shows how playing a dialogue scene worked in the DialogueManager:
+								<li>First the public function <span style="color: #a6e22e">PlayDialogueScene</span> gets called. It interupts in-situ dialogue if necessary.</li>
+								<li><span style="color: #a6e22e">PlayLines</span> starts a "while loop" using the IEnumerable interface.</li>
+								<li><span style="color: #a6e22e">PlayLine</span> gets all the data to play audio and make the dialogue box display text and portraits.</li>
+								<li><span style="color: #a6e22e">ShowAllOrNext</span> is called when the user presses the "next" button. This either shows all the text, plays the next line, or ends the dialogue scene.</li>
+								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">/// &lt;summary&gt;</span>
+<span style="color: #75715e">/// Play a dialogue scene composed of a sequence of dialogue lines.</span>
+<span style="color: #75715e">/// &lt;/summary&gt;</span>
+<span style="color: #75715e">/// &lt;param name=&quot;lines&quot;&gt; The dialogue lines containing the text and other information. &lt;/param&gt;</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">PlayDialogueScene</span><span style="color: #f8f8f2">(SceneDialogueSequenceSO</span> <span style="color: #f8f8f2">lines)</span>
+<span style="color: #f8f8f2">{</span>
+<span style="color: #75715e">#if UNITY_EDITOR</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(DialogueDisabler.GetIsDialogueDisabled())</span> <span style="color: #f8f8f2">{</span> <span style="color: #66d9ef">return</span><span style="color: #f8f8f2">;</span> <span style="color: #f8f8f2">}</span>
+<span style="color: #75715e">#endif</span>
+
+	<span style="color: #f8f8f2">_previous</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">GameStateManager.Instance.CurrentGameState;</span>
+	<span style="color: #f8f8f2">GameStateManager.Instance.SetState(GameState.InCutscene);</span>
+	<span style="color: #75715e">// Interrupt other dialogue if necessary</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_isPlayingDialogueInSitu)</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #f8f8f2">_audioSource.Stop();</span>
+		<span style="color: #f8f8f2">_dialogueInSituBox.Hide();</span>
+		<span style="color: #f8f8f2">_isPlayingDialogueInSitu</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">false</span><span style="color: #f8f8f2">;</span>
+		<span style="color: #f8f8f2">StopAllCoroutines();</span>
+	<span style="color: #f8f8f2">}</span>
+	<span style="color: #f8f8f2">PlayLines(lines.GetLines());</span>
+<span style="color: #f8f8f2">}</span>
+
+<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">PlayLines</span><span style="color: #f8f8f2">(SceneDialogueLineSO[]</span> <span style="color: #f8f8f2">lines)</span>
+<span style="color: #f8f8f2">{</span>
+	<span style="color: #f8f8f2">_curSceneLines</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">lines;</span>
+	<span style="color: #f8f8f2">_sceneLineEnumerator</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">((IEnumerable&lt;SceneDialogueLineSO&gt;)_curSceneLines).GetEnumerator();</span>
+
+	<span style="color: #75715e">//The Enumerator here is used in ShowAllOrNext to &#39;finish&#39; the while loop</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_sceneLineEnumerator.MoveNext())</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #f8f8f2">PlayLine(_sceneLineEnumerator.Current);</span>
+	<span style="color: #f8f8f2">}</span>
+<span style="color: #f8f8f2">}</span>
+
+<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">PlayLine</span><span style="color: #f8f8f2">(SceneDialogueLineSO</span> <span style="color: #f8f8f2">line)</span>
+<span style="color: #f8f8f2">{</span>
+	<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">true</span><span style="color: #f8f8f2">;</span>
+
+	<span style="color: #f8f8f2">_dialogueSceneBox.Display(</span>
+		<span style="color: #f8f8f2">line.GetText(),</span>
+		<span style="color: #f8f8f2">line.GetSpeaker(),</span>
+		<span style="color: #f8f8f2">line.GetSpeakerName(),</span>
+		<span style="color: #f8f8f2">GetPortrait(line,</span> <span style="color: #f8f8f2">SpeakerSide.Left),</span>
+		<span style="color: #f8f8f2">GetPortrait(line,</span> <span style="color: #f8f8f2">SpeakerSide.Right),</span>
+		<span style="color: #f8f8f2">line.GetSpeakerColor());</span>
+
+	<span style="color: #f8f8f2">AudioClip</span> <span style="color: #f8f8f2">audioClip</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">line.GetAudio();</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(audioClip)</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #f8f8f2">_audioSource.PlayOneShot(line.GetAudio());</span>
+	<span style="color: #f8f8f2">}</span>
+<span style="color: #f8f8f2">}</span>
+
+<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">ShowAllOrNext</span><span style="color: #f8f8f2">()</span>
+<span style="color: #f8f8f2">{</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(!_isPlayingDialogueScene)</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #66d9ef">return</span><span style="color: #f8f8f2">;</span>
+	<span style="color: #f8f8f2">}</span>
+
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_dialogueSceneBox.GetIsRollingText())</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #f8f8f2">_dialogueSceneBox.ShowAllText();</span>
+	<span style="color: #f8f8f2">}</span>
+	<span style="color: #66d9ef">else</span>
+	<span style="color: #f8f8f2">{</span>
+		<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_sceneLineEnumerator</span> <span style="color: #f8f8f2">!=</span> <span style="color: #66d9ef">null</span> <span style="color: #f8f8f2">&amp;&amp;</span> <span style="color: #f8f8f2">_sceneLineEnumerator.MoveNext())</span>
+		<span style="color: #f8f8f2">{</span>
+			<span style="color: #f8f8f2">_audioSource.Stop();</span>
+			<span style="color: #f8f8f2">PlayLine(_sceneLineEnumerator.Current);</span>
+		<span style="color: #f8f8f2">}</span>
+		<span style="color: #66d9ef">else</span>
+		<span style="color: #f8f8f2">{</span>
+			<span style="color: #f8f8f2">_dialogueSceneBox.Hide();</span>
+			<span style="color: #f8f8f2">_audioSource.Stop();</span>
+			<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">false</span><span style="color: #f8f8f2">;</span>
+			<span style="color: #f8f8f2">GameStateManager.Instance.SetState(_previous);</span>
+		<span style="color: #f8f8f2">}</span>
+	<span style="color: #f8f8f2">}</span>
+<span style="color: #f8f8f2">}</span>
+</pre></div>
+<p></p>
+								<h3>Tech Art</h3>
+								<p>
+									We wanted to achieve a visual style that was distinct, but still heavily inspired by Hades (Supergiant Games, 2020). 
+									I worked closely with our 2D artist and art director to bring their vision to life in the game.
+								</p>
+								<p>
+									I made a structure for setting up the game world with parallax scrolling, 2D lighting and post-processing effects.
+								</p>
+								<p>
+									For the river I created a shader in Unity's shader graph that uses voronoi cells to create the wave highlights, 
+									gradient noise is used to offset the uv sampling which distorts the cells to create a wave-like effect. 
+									An important consideration was that we wanted to have many different rivers, 
+									so I added parameters to easily tweak the way the river looked and how it moved.
+								</p>
+								<img height="250" src="images/river_default.gif"/>
+								<img height="250" src="images/river_ziggy.gif"/>
+								<p>
+									To combine 2D and 3D assets in the best way possible and use a single render pipeline and make use of powerful 2D lighting, 
+									the 3D assets are pre-rendered to 2D frame animations. I made the character in Blender following our artist's concept art, 
+									animated it and exported it into 2D frames. To make the boat and the oar look submerged in the river, I added a plane with a transparency mask 
+									so that fragments that go into it are not rendered.
+								</p>
+								<img height="250" src="images/river_movement.gif"/>
+								<h3>Tech Lead</h3>
+								<ul>
+									Some of the tasks I did as tech lead were: 
+
+									<li>Setup documentation in Notion and made sure it was maintained.</li>
+									<li>Lead weekly tech meetings, writing out the agenda and making sure relevant parties were present.</li> 
+									<li>Kept an overview of the project from a technical perspective.</li>
+									<li>Ensured a consistent code style was followed.</li> 
+									<li>Lead scrum meetings and made sure programmers had tasks on the Kanban board to work on</li>
+									<li>Kept track of progress and time estimates using a macro chart.</li>
+								</ul>
 
 							</article>
 						<div class="col-12">
