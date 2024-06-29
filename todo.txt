@@ -2,7 +2,7 @@
 [x] itugit gives 404
 [x] Scale up Prax gifs, make sure it works on mobile 
 [x] Show code
-[] Download Resume (write and add Resume)
+[x] Download Resume (write and add Resume)
 [] Mention the engine in the detailed page too (in "read more")
 [] Bullet points in the detailed page? (in "read more")
 
