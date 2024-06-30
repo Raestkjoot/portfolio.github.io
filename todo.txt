@@ -9,6 +9,8 @@
 [] Make the menu not become a hamburger menu on smaller screens.
 [] BUG: The hamburger menu on mobile overlaps with the email.
 [] Make "More projects" more distinct on mobile (maybe just make them smaller?)
+[] Icon for the website
+[] Domain name (maybe gunnar-portfolio.com or something)
 
 (Code listing)
 http://hilite.me/
