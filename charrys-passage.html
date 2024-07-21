@@ -82,8 +82,7 @@
 									Using an enum the designers could easily choose a character for a dialogue line from a drop-down menu.
 								</p>
 								Here is a code snippet that shows how playing a dialogue scene worked in the DialogueManager:
-								<li>First the public function <span style="color: #a6e22e">PlayDialogueScene</span> gets called. It interupts in-situ dialogue if necessary.</li>
-								<li><span style="color: #a6e22e">PlayLines</span> starts a "while loop" using the IEnumerable interface.</li>
+								<li>First the public function <span style="color: #a6e22e">PlayDialogueScene</span> gets called. It interupts in-situ dialogue if necessary and starts a "while loop" using the IEnumerable interface.</li>
 								<li><span style="color: #a6e22e">PlayLine</span> gets all the data to play audio and make the dialogue box display text and portraits.</li>
 								<li><span style="color: #a6e22e">ShowAllOrNext</span> is called when the user presses the "next" button. This either shows all the text, plays the next line, or ends the dialogue scene.</li>
 								<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">/// &lt;summary&gt;</span>
@@ -96,25 +95,21 @@
 	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(DialogueDisabler.GetIsDialogueDisabled())</span> <span style="color: #f8f8f2">{</span> <span style="color: #66d9ef">return</span><span style="color: #f8f8f2">;</span> <span style="color: #f8f8f2">}</span>
 <span style="color: #75715e">#endif</span>
 
-	<span style="color: #f8f8f2">_previous</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">GameStateManager.Instance.CurrentGameState;</span>
+	<span style="color: #f8f8f2">_previous</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">GameStateManager.Instance.CurrentGameState;</span>
 	<span style="color: #f8f8f2">GameStateManager.Instance.SetState(GameState.InCutscene);</span>
 	<span style="color: #75715e">// Interrupt other dialogue if necessary</span>
 	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_isPlayingDialogueInSitu)</span>
 	<span style="color: #f8f8f2">{</span>
 		<span style="color: #f8f8f2">_audioSource.Stop();</span>
 		<span style="color: #f8f8f2">_dialogueInSituBox.Hide();</span>
-		<span style="color: #f8f8f2">_isPlayingDialogueInSitu</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">false</span><span style="color: #f8f8f2">;</span>
+		<span style="color: #f8f8f2">_isPlayingDialogueInSitu</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">false;</span>
 		<span style="color: #f8f8f2">StopAllCoroutines();</span>
 	<span style="color: #f8f8f2">}</span>
-	<span style="color: #f8f8f2">PlayLines(lines.GetLines());</span>
-<span style="color: #f8f8f2">}</span>
 
-<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">PlayLines</span><span style="color: #f8f8f2">(SceneDialogueLineSO[]</span> <span style="color: #f8f8f2">lines)</span>
-<span style="color: #f8f8f2">{</span>
-	<span style="color: #f8f8f2">_curSceneLines</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">lines;</span>
-	<span style="color: #f8f8f2">_sceneLineEnumerator</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">((IEnumerable&lt;SceneDialogueLineSO&gt;)_curSceneLines).GetEnumerator();</span>
+	<span style="color: #f8f8f2">_curSceneLines</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">lines;</span>
+	<span style="color: #75715e">// This enumerator is used in ShowAllOrNext to iterate through all the lines.</span>
+	<span style="color: #f8f8f2">_sceneLineEnumerator</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">((IEnumerable</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">SceneDialogueLineSO</span><span style="color: #f92672">&gt;</span><span style="color: #f8f8f2">)_curSceneLines).GetEnumerator();</span>
 
-	<span style="color: #75715e">//The Enumerator here is used in ShowAllOrNext to &#39;finish&#39; the while loop</span>
 	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_sceneLineEnumerator.MoveNext())</span>
 	<span style="color: #f8f8f2">{</span>
 		<span style="color: #f8f8f2">PlayLine(_sceneLineEnumerator.Current);</span>
@@ -123,7 +118,7 @@
 
 <span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">PlayLine</span><span style="color: #f8f8f2">(SceneDialogueLineSO</span> <span style="color: #f8f8f2">line)</span>
 <span style="color: #f8f8f2">{</span>
-	<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">true</span><span style="color: #f8f8f2">;</span>
+	<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">true;</span>
 
 	<span style="color: #f8f8f2">_dialogueSceneBox.Display(</span>
 		<span style="color: #f8f8f2">line.GetText(),</span>
@@ -133,7 +128,7 @@
 		<span style="color: #f8f8f2">GetPortrait(line,</span> <span style="color: #f8f8f2">SpeakerSide.Right),</span>
 		<span style="color: #f8f8f2">line.GetSpeakerColor());</span>
 
-	<span style="color: #f8f8f2">AudioClip</span> <span style="color: #f8f8f2">audioClip</span> <span style="color: #f8f8f2">=</span> <span style="color: #f8f8f2">line.GetAudio();</span>
+	<span style="color: #f8f8f2">AudioClip</span> <span style="color: #f8f8f2">audioClip</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">line.GetAudio();</span>
 	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(audioClip)</span>
 	<span style="color: #f8f8f2">{</span>
 		<span style="color: #f8f8f2">_audioSource.PlayOneShot(line.GetAudio());</span>
@@ -142,7 +137,7 @@
 
 <span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">ShowAllOrNext</span><span style="color: #f8f8f2">()</span>
 <span style="color: #f8f8f2">{</span>
-	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(!_isPlayingDialogueScene)</span>
+	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(</span><span style="color: #f92672">!</span><span style="color: #f8f8f2">_isPlayingDialogueScene)</span>
 	<span style="color: #f8f8f2">{</span>
 		<span style="color: #66d9ef">return</span><span style="color: #f8f8f2">;</span>
 	<span style="color: #f8f8f2">}</span>
@@ -153,7 +148,7 @@
 	<span style="color: #f8f8f2">}</span>
 	<span style="color: #66d9ef">else</span>
 	<span style="color: #f8f8f2">{</span>
-		<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_sceneLineEnumerator</span> <span style="color: #f8f8f2">!=</span> <span style="color: #66d9ef">null</span> <span style="color: #f8f8f2">&amp;&amp;</span> <span style="color: #f8f8f2">_sceneLineEnumerator.MoveNext())</span>
+		<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_sceneLineEnumerator</span> <span style="color: #f92672">!=</span> <span style="color: #f8f8f2">null</span> <span style="color: #f92672">&amp;&amp;</span> <span style="color: #f8f8f2">_sceneLineEnumerator.MoveNext())</span>
 		<span style="color: #f8f8f2">{</span>
 			<span style="color: #f8f8f2">_audioSource.Stop();</span>
 			<span style="color: #f8f8f2">PlayLine(_sceneLineEnumerator.Current);</span>
@@ -162,7 +157,7 @@
 		<span style="color: #f8f8f2">{</span>
 			<span style="color: #f8f8f2">_dialogueSceneBox.Hide();</span>
 			<span style="color: #f8f8f2">_audioSource.Stop();</span>
-			<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f8f8f2">=</span> <span style="color: #66d9ef">false</span><span style="color: #f8f8f2">;</span>
+			<span style="color: #f8f8f2">_isPlayingDialogueScene</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">false;</span>
 			<span style="color: #f8f8f2">GameStateManager.Instance.SetState(_previous);</span>
 		<span style="color: #f8f8f2">}</span>
 	<span style="color: #f8f8f2">}</span>
