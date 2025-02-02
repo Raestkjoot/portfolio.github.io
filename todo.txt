@@ -1,16 +1,55 @@
+https://youtu.be/G3e-cpL7ofc?si=ylCYac5eHZYD_TMa&t=1063
+
+[] About Me page
+	[] Citation for Sofus on Judo image
+	[] Add favorite games / what inspires me / what I want to work on
+	[] Image of Hades and Luck with Study
+	[] Link to Neocities? (maybe, once I have that)
+[] Use svg data for all icons, no external links
+[] Update code color theme
+[] Add new projects
+	[] AEGP - G-Engine & Platformer Prototype
+	[] HiPerf - Castle Catapult Defence
+	[] Thesis - Weapon System using GAS
+	[] Shadow Mapping
+[] Elaborate on projects
+	[] Invicta
+	[] Archery
+	[] UE5 FPS
+[] Left align the small projects? (Currently, if I add more they will be added to the center of the page which looks kinda weird)
+	[] Also, add some dynamic scaling to them so they won't look huge on mobile or half-monitor windows
+[] Make sure it works on mobile
+
+
+[x] Transfer all projects from portfolio 1.0
+	[x] PRAX
+	[x] Helluva Ride
+	[x] Downspace
+	[x] Invicta
+	[x] Archery Coding Challenge
+	[x] Unreal FPS Challenge
+	[x] Bad Apple
+
+
+/////// OLD TODO ////////
 [x] MSc BSc, don't abbreviate.
 [x] itugit gives 404
 [x] Scale up Prax gifs, make sure it works on mobile 
 [x] Show code
 [x] Download Resume (write and add Resume)
+[x] Icon for the website
+[x] Domain name (maybe gunnar-portfolio.com or something)
 [] Mention the engine in the detailed page too (in "read more")
-[] Bullet points in the detailed page? (in "read more")
+  [] Bullet points in the detailed page? (in "read more")
+[] Expand on the smaller projects in the "more" section. 
+  [] Unreal engine: primarily in C++, creating code, systems, and visual building blocks for designers. 
+  [] Unity engine: Game feel and juice. 
+  [] Project Invicta: 2D in 3D, ability system, a video, ask Taylor what I can show. 
+  [] Bad Apple: Show some code, how I read video, how I converted bitmap to array of points.  
 
 [] Make the menu not become a hamburger menu on smaller screens.
 [] BUG: The hamburger menu on mobile overlaps with the email.
 [] Make "More projects" more distinct on mobile (maybe just make them smaller?)
-[] Icon for the website
-[] Domain name (maybe gunnar-portfolio.com or something)
 
 (Code listing)
 http://hilite.me/
