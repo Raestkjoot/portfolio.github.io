@@ -94,9 +94,9 @@
 		<p>
 			We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input.
 		</p>
-		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Positional movement (simplified)</span>
-<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">Move</span><span style="color: #f8f8f2">(Vector2</span> <span style="color: #f8f8f2">inputDir)</span> <span style="color: #f8f8f2">{</span>
-	<span style="color: #f8f8f2">_controller.Move(inputDir</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">_speed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+		<!-- HTML generated using hilite.me --><div class="code"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Positional movement (simplified)</span>
+<span style="color: #ae81ff">public void</span> <span style="color: #66d9ef">Move</span><span style="color: #f8f8f2">(</span><span style="color: #66d9ef">Vector2</span> <span style="color: #f8f8f2">inputDir)</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #f8f8f2">_controller.<span style="color: #66d9ef">Move</span>(inputDir * _speed * <span style="color: #66d9ef">Time</span>.deltaTime);</span>
 <span style="color: #f8f8f2">}</span>
 </pre></div>
 		<p>
@@ -104,17 +104,17 @@
 		</p>
 		<p>
 			The robot's rotation does not affect the movement in any way. It is simply a way to show the direction the the player is moving, while also adding to the smoothness.
-			Every update the <span style="color: #a6e22e">UpdateMeshRotation</span> function is called, smoothly rotating the robot towards the last direction of movement.
+			Every update the <span style="color: #66d9ef">UpdateMeshRotation</span> function is called, smoothly rotating the robot towards the last direction of movement.
 			This means that if the robot is facing to the left and the player moves to the right for just one frame, 
 			the robot will move right only in that frame, but the mesh will rotate smoothly over multiple frames until it faces towards the right.
 		</p>
 		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth rotation (simplified)</span>
-<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">UpdateMeshRotation</span><span style="color: #f8f8f2">()</span> <span style="color: #f8f8f2">{</span>
-	<span style="color: #f8f8f2">Quaternion</span> <span style="color: #f8f8f2">targetRotation</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Quaternion.LookRotation(_lastMoveDir,</span> <span style="color: #f8f8f2">Vector3.up);</span>
- 	<span style="color: #f8f8f2">_mesh.rotation</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Quaternion.RotateTowards(</span>
+<span style="color: #ae81ff">private void</span> <span style="color: #66d9ef">UpdateMeshRotation</span><span style="color: #f8f8f2">()</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #66d9ef">Quaternion</span> <span style="color: #f8f8f2">targetRotation</span> = <span style="color: #66d9ef">Quaternion</span>.<span style="color: #66d9ef">LookRotation</span>(_lastMoveDir,</span> <span style="color: #66d9ef">Vector3</span><span style="color: #f8f8f2">.up);</span>
+ 	<span style="color: #f8f8f2">_mesh.rotation</span> = <span style="color: #66d9ef">Quaternion</span>.<span style="color: #66d9ef">RotateTowards</span>(</span>
 		<span style="color: #f8f8f2">_mesh.rotation,</span>
 		<span style="color: #f8f8f2">targetRotation,</span>
-		<span style="color: #f8f8f2">_meshRotationSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+		<span style="color: #f8f8f2">_meshRotationSpeed</span> * <span style="color: #f8f8f2"><span style="color: #66d9ef">Time</span>.deltaTime);</span>
 <span style="color: #f8f8f2">}</span>
 </pre></div>
 		<img src="images/prax-rotation.gif" class="project-image"/>
@@ -123,19 +123,19 @@
 			they are going, which is especially important when using a joystick controller.
 		</p>
 		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth leaning (simplified)</span>
-<span style="color: #66d9ef">private</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">UpdateMeshTilt</span><span style="color: #f8f8f2">(</span><span style="color: #66d9ef">float</span> <span style="color: #f8f8f2">normalizedSpeed)</span> <span style="color: #f8f8f2">{</span>
+<span style="color: #ae81ff">private void</span> <span style="color: #66d9ef">UpdateMeshTilt</span>(<span style="color: #ae81ff">float</span> normalizedSpeed) {
 	<span style="color: #75715e">// Lean based on speed</span>
-	<span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(normalizedSpeed</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
-		<span style="color: #66d9ef">float</span> <span style="color: #f8f8f2">targetAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">normalizedSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">_maxMeshTiltAngle;</span>
-		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #f8f8f2">targetAngle,</span> 
-			<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+	<span style="color: #ae81ff">if</span> (normalizedSpeed &gt; <span style="color: #ffbe21">0.001f</span>) {
+		<span style="color: #ae81ff">float</span> targetAngle = normalizedSpeed * _maxMeshTiltAngle;
+		_curTiltAngle = <span style="color: #66d9ef">Mathf</span>.<span style="color: #66d9ef">Lerp</span>(_curTiltAngle, targetAngle,
+			_meshTiltSpeed * <span style="color: #66d9ef">Time</span>.deltaTime);
 	<span style="color: #75715e">// Lean back if not moving</span>
-	<span style="color: #f8f8f2">}</span> <span style="color: #66d9ef">else</span> <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(_curTiltAngle</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
-		<span style="color: #f8f8f2">_curTiltAngle</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">Mathf.Lerp(_curTiltAngle,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">,</span>
-			<span style="color: #f8f8f2">_meshTiltSpeed</span> <span style="color: #f92672">*</span> <span style="color: #f8f8f2">Time.deltaTime);</span>
+	} <span style="color: #ae81ff">else if</span> (_curTiltAngle &gt; <span style="color: #ffbe21">0.001f</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
+		_curTiltAngle = <span style="color: #66d9ef">Mathf</span>.<span style="color: #66d9ef">Lerp</span>(_curTiltAngle, <span style="color: #ffbe21">0.0f</span>,
+			_meshTiltSpeed * <span style="color: #66d9ef">Time</span>.deltaTime);
 	<span style="color: #f8f8f2">}</span>
   
-	<span style="color: #f8f8f2">_tiltingMesh.localEulerAngles</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #f8f8f2">Vector3(</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">_curTiltAngle,</span> <span style="color: #ae81ff">180.0f</span><span style="color: #f8f8f2">,</span> <span style="color: #ae81ff">0.0f</span><span style="color: #f8f8f2">);</span>
+	_tiltingMesh.localEulerAngles = <span style="color: #ae81ff">new</span> <span style="color: #66d9ef">Vector3</span>(-_curTiltAngle, <span style="color: #ffbe21">180.0f</span><span style="color: #f8f8f2">,</span> <span style="color: #ffbe21">0.0f</span><span style="color: #f8f8f2">);</span>
 <span style="color: #f8f8f2">}</span>
 </pre></div>
 

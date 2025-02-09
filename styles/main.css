@@ -381,3 +381,19 @@ blockquote {
 	border-style: solid;
 	border-color: var(--bg2);
 }
+
+/* For text highlighting: <span style="color: #ae81ff"> */
+/* Comments: #75715e */
+/* built-in keywords: #ae81ff */
+/* user-defined keywords: #66d9ef */
+/* Literal values: #ffbe21 */
+/* Unused: #f92672 */
+.code {
+	border:solid gray;
+	background: #272822;
+	color: #f8f8f2;
+	overflow:auto;
+	width:auto;
+	border-width:.1em .1em .1em .8em;
+	padding:.2em .6em;
+}

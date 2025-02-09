@@ -1,5 +1,4 @@
 [] Use svg data for all icons, no external links
-[] Update code color theme
 [] About Me page
 	[x] Citation for Sofus on Judo image
 	[] Add favorite games / what inspires me / what I want to work on
@@ -22,6 +21,7 @@
 	[x] Thesis - Weapon System using GAS
 	[] Shadow Mapping
 
+[x] Update code color theme
 
 
 
@@ -58,5 +58,10 @@
 (Code listing)
 http://hilite.me/
 [C++, monokai]
+
+built-in Keywords & types: blue #ae81ff
+User-defined functions & types: blue #66d9ef
+Literal values: Orange #ffbe21
+Unused: Pink #f92672
 
 https://youtu.be/G3e-cpL7ofc?si=ylCYac5eHZYD_TMa&t=1063
