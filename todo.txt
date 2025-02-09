@@ -1,10 +1,5 @@
 [] Use svg data for all icons, no external links
 [] Update code color theme
-[] Add new projects
-	[x] AEGP - G-Engine & Platformer Prototype
-	[] HiPerf - Castle Catapult Defence
-	[] Thesis - Weapon System using GAS
-	[] Shadow Mapping
 [] About Me page
 	[x] Citation for Sofus on Judo image
 	[] Add favorite games / what inspires me / what I want to work on
@@ -21,6 +16,11 @@
 [] Left align the small projects? (Currently, if I add more they will be added to the center of the page which looks kinda weird)
 	[] Also, add some dynamic scaling to them so they won't look huge on mobile or half-monitor windows
 [] Make sure it works on mobile
+[] Add new projects
+	[x] AEGP - G-Engine & Platformer Prototype
+	[x] HiPerf - Castle Catapult Defence
+	[x] Thesis - Weapon System using GAS
+	[] Shadow Mapping
 
 
 
