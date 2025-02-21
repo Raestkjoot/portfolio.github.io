@@ -94,7 +94,7 @@
 		<p>
 			We wanted to make the player feel as much in control as possible. To achieve this, the movement is directly linked to the input.
 		</p>
-		<!-- HTML generated using hilite.me --><div class="code"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Positional movement (simplified)</span>
+		<!-- HTML generated using hilite.me --><div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #75715e">// Positional movement (simplified)</span>
 <span style="color: #ae81ff">public void</span> <span style="color: #66d9ef">Move</span><span style="color: #f8f8f2">(</span><span style="color: #66d9ef">Vector2</span> <span style="color: #f8f8f2">inputDir)</span> <span style="color: #f8f8f2">{</span>
 	<span style="color: #f8f8f2">_controller.<span style="color: #66d9ef">Move</span>(inputDir * _speed * <span style="color: #66d9ef">Time</span>.deltaTime);</span>
 <span style="color: #f8f8f2">}</span>
@@ -108,7 +108,7 @@
 			This means that if the robot is facing to the left and the player moves to the right for just one frame, 
 			the robot will move right only in that frame, but the mesh will rotate smoothly over multiple frames until it faces towards the right.
 		</p>
-		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth rotation (simplified)</span>
+		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #75715e">// Smooth rotation (simplified)</span>
 <span style="color: #ae81ff">private void</span> <span style="color: #66d9ef">UpdateMeshRotation</span><span style="color: #f8f8f2">()</span> <span style="color: #f8f8f2">{</span>
 	<span style="color: #66d9ef">Quaternion</span> <span style="color: #f8f8f2">targetRotation</span> = <span style="color: #66d9ef">Quaternion</span>.<span style="color: #66d9ef">LookRotation</span>(_lastMoveDir,</span> <span style="color: #66d9ef">Vector3</span><span style="color: #f8f8f2">.up);</span>
  	<span style="color: #f8f8f2">_mesh.rotation</span> = <span style="color: #66d9ef">Quaternion</span>.<span style="color: #66d9ef">RotateTowards</span>(</span>
@@ -122,7 +122,7 @@
 			Another way we add smoothness is by making the robot tilt forwards when moving. This also helps to show the player how fast 
 			they are going, which is especially important when using a joystick controller.
 		</p>
-		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">// Smooth leaning (simplified)</span>
+		<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #75715e">// Smooth leaning (simplified)</span>
 <span style="color: #ae81ff">private void</span> <span style="color: #66d9ef">UpdateMeshTilt</span>(<span style="color: #ae81ff">float</span> normalizedSpeed) {
 	<span style="color: #75715e">// Lean based on speed</span>
 	<span style="color: #ae81ff">if</span> (normalizedSpeed &gt; <span style="color: #ffbe21">0.001f</span>) {

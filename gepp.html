@@ -78,17 +78,296 @@
 					&nbsp;<b>Links:</b>&nbsp; <a class="links-button" href="https://github.com/Raestkjoot/AEGP" target="_blank">Source</a>
 				</i>
 				<i>
-					A project done at ITU. I made a C++ game engine with 2D batch rendering and made a simple platformer prototype in that engine.
+					I made a C++ game engine with 2D batch rendering and made a simple platformer prototype in that engine. 
+					With this project I wanted to learn about engine and gameplay programming and really get past seeing the engine as a black box, and instead make one myself and learn exactly how they work.
 				</i>
 			</div>
 		</div>
 		<hr />
 
-		<!-- PLAYER MOVEMENT -->
+		<!-- GAMEPLAY -->
 		<h2>
-			TODO
+			Gameplay
 		</h2>
+		<p>
+			Gameplay programming is probably my favorite type of game programming, because of how important it is in defining the player experience, 
+			it sits in an interesting intersection between tech and design. 
+			As part of my research for this project I looked into game feel and found a very interesting paper that broke it up into 3 distinct elements:
+			<li>
+				<b>Support:</b> Support the player's intention.
+			</li>
+			<li>
+				<b>Amplification:</b> Audio and visual feedback
+			</li>
+			<li>
+				<b>Physicality:</b> Feeling of how an object behaves
+			</li>
+		</p>
+		<p>
+			I found that focusing on these three elements provided a very clear language for thinking and communicating about game feel.
+		</p>
+
+<h3>
+			Gameplay - Support
+		</h3>
+		<p>
+			The idea with support is to make the game respond inline with player's feelings and intentions, rather than the purely logical state of the game.
+			To support the player's intention, the platformer prototype has three different time values:
+    </p>
+		<li>
+			<b>Coyote time:</b> This is a classic trick in platformer games, where the game has a small window after the character has run off an edge where the player can still jump.
+		</li>
+		<li>
+			<b>Jump buffer, holding:</b> This lets the player buffer a jump by pressing and holding down the jump button before landing.
+		</li>
+		<li>
+			<b>Jump buffer, released:</b> Since holding down the jump button lets you jump higher, sometimes you want to quickly tap the jump button to execute a short jump. 
+			Timing a quick tap with the exact moment the character lands can be difficult, 
+			so this buffer will buffer a jump for a small time frame if the player presses and releases the jump button just before landing.
+		</li>
+		<p>
+			The left gif shows coyote time, the one on the right shows the jump buffer.
+		</p>
+		<div class="project-image-container">
+			<img src="images/gepp-cayote-time.gif" class="project-image"/>
+			<img src="images/gepp-jump-buffer.gif" class="project-image"/>
+		</div>
+		<p></p>
+		<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #ae81ff">bool</span> <span style="color: #66d9ef">MoveSystem</span>::<span style="color: #66d9ef">ShouldJump</span>(<span style="color: #66d9ef">PlayerController</span>& pc) <span style="color: #ae81ff">const</span> {
+	<span style="color: #ae81ff">bool</span> keyPressedInTime = pc.jumpReleased ?
+		pc.passedTime - pc.jumpPressedTime < pc.jumpCache1 :
+		pc.passedTime - pc.jumpPressedTime < pc.jumpCache2;
+
+	<span style="color: #ae81ff">bool</span> coyote = pc.passedTime - pc.lastGroundedTime < pc.coyoteTime;
+
+	<span style="color: #ae81ff">return</span> (pc.isGrounded || coyote) && keyPressedInTime && pc.readyToJumpAgain;
+}</pre>
+	</div>
+	<p>
+		Platformers often have ways to affect how far the player character jumps, the classic example is holding down the jump button to jump higher, which I implemented. 
+		I also implemented a system that lets the player trade horizontal movement for vertical movement, introducting an interesting choise and use of momentum. 
+		So, while in a jump moving upwards, the player can move against the initial horizontal direction to effectively convert their horizontal velocity into vertical velocity.
+	</p>
+	<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #ae81ff">if</span> (playerController.jumpReleased || playerController.velocity.y < <span style="color: #ffbe21">-0.2f</span>) {
+	playerController.velocity.y -= playerController.gravity * delta;
+}
+<span style="color: #ae81ff">else</span> {
+	playerController.velocity.y -= playerController.jumpHeldGravity * delta;
+}
+
+<span style="color: #75715e">// Convert horizontal velocity to vertical velocity when going up</span>
+<span style="color: #ae81ff">if</span> (playerController.velocity.y > <span style="color: #ffbe21">0.0f</span> 
+	&& playerController.moveDirection * playerController.initialAirHorizontalVelocity < <span style="color: #ffbe21">0.0f</span> 
+	&& playerController.moveDirection * playerController.velocity.x < <span style="color: #ffbe21">0.0f</span>) {
+	playerController.velocity.y += playerController.airVerticalAcceleration * delta;
+}</pre>
+	</div>
+
+		<h3>
+			Gameplay - Amplification
+		</h3>
+		<p>
+			The feedback that works to communicate the game state to the player, in my case, audio and visuals, but it could also include other forms of feedback such as haptic feedback. 
+		</p>
+		<p>
+			For the visuals, I wanted the character to clearly communicate its state to the player, with idle, running, jumping and falling animations. 
+			I modelled, rigged and animated the player character in blender and then rendered the animations into 2D frame animations. 
+			This is the same technique that Dead Cells and Hades use to get nice and smooth 2D graphics that are easy to tweak and produce on a limited budget.
+		</p>
+		<img src="images/gepp-blender.png" class="project-image"/>
+		<p>
+			For the audio I decided to work with an audio designer and asked him what kind of functionality he would need. 
+		</p>
+		<blockquote>
+			<a href="https://danieljakob.net/" target="_blank">
+				<img src="images/danieljakob.gif">
+			</a>
+			Music and sound design by Daniel Jakob.
+			</blockquote>
+		<p>
+			I used a minimalistic audio engine library miniaudio, and implemented an AudioArray class that we used to play footsteps. 
+			The AudioArray holds an array of audio samples that can be picked from at random without playing the same one twice in a row, 
+			and lets the user specify a pitch range, so the footsteps always sound a little different.
+		</p>
+		<p>
+			The audio array uses an std::vector to hold each audio sample. When I implemented this I started to experience crashes and realized 
+			it was important to make the audio samples have a move constructor, to avoid them getting destroyed when they were moved to a new array.
+		</p>
+		<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #66d9ef">Audio</span>::<span style="color: #66d9ef">Audio</span>(<span style="color: #66d9ef">Audio</span>&& other) <span style="color: #ae81ff">noexcept</span> {
+	_audio = other._audio;
+	_volume = other._volume;
+	_pitch = other._pitch;
+	other._audio = <span style="color: #ae81ff">nullptr</span>;
+}</pre>
+		</div>
 		
+		<h3>
+			Gameplay - Physicality
+		</h3>
+		<p>
+			I wanted to get the right balance between floaty jumps 
+			- that feel smooth and like the player can string moves together and make use of momentum to move faster and better - 
+			and more precise and rigid control that lets the player control the character very intuitively without having to try and account for sliding around too much.
+		</p>
+		<img src="images/gepp-gameplay-physicality.gif" class="project-image"/>
+		<p>
+			It also really helped having full control of how physics was handled, so I can make the player character interact with the environment exactly how I want.
+		</p>
+
+	<hr/>
+
+	<!-- ENGINE -->
+	<h2>
+		Engine
+	</h2>
+	<h3>
+		Engine - Rendering
+	</h3>
+	<p>
+		For rendering I made a 2D batch renderer using OpenGL. Because everything is rendered in a single batch, there are 3 single elements of this renderer:
+	</p>
+	<li>
+		<b>A vertex buffer:</b> Holds all the vertices that make up each quad. 
+	</li>
+	<li>
+		<b>A uniform buffer:</b> Holds all sprite data for each quad.
+	</li>
+	<li>
+		<b>A texture atlas:</b> Contains all the textures each of the sprites use.
+	</li>
+	<img src="images/gepp-renderer.jpg" class="project-image"/>
+
+	<p>
+		To make the vertices as light as possible, the flyweight pattern is used so they don't have to hold duplicate data. So each vertex contains:
+	</p>
+	<li>
+		<b>Position:</b> local within the quad. Position &isin;  {(0, 0),(1, 0),(0, 1),(1, 1)}.
+	</li>
+	<li>
+		<b>QuadID:</b> Used to index into the uniform buffer object to get the sprite data.
+	</li>
+
+	<p>
+		The uniform buffer contains:
+	</p>
+	<li>
+		Texture base coordinate
+	</li>
+	<li>
+		Texture width-height
+	</li>
+	<li>
+		Sprite world transform
+	</li>
+	<p>
+		Here is a screenshot of the uniform buffer viewed in RenderDoc:
+	</p>
+	<img src="images/gepp-renderdoc.jpg" class="project-image" style="height: 400px"/>
+
+	<p>
+		With that we can calculate everything we need in our basic 2D renderer. Here is how the vertex shader calculates the texture coordinates and position:
+	</p>
+	<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #ae81ff">void</span> main() {
+   TexCoords = (quad[QuadID].TexBaseCoords + Pos * quad[QuadID].TexWidthHeight) / TexSize;
+
+   <span style="color: #ae81ff">vec2</span> offsetPosition = Pos + Offset;
+   <span style="color: #ae81ff">vec3</span> position = CameraMatrix * quad[QuadID].Transform * <span style="color: #ae81ff">vec3</span>(offsetPosition, 1.0f);
+   <span style="color: #66d9ef">gl_Position</span> = <span style="color: #ae81ff">vec4</span>(position.xy, 0.5f, 1.0f);
+}</pre>
+	</div>
+
+	<p>
+		When I tested the performance, it turned out that the largest bottleneck was in how transforms were handled. 
+		I saved the position, rotation and scale of each object and then calculated the transform every frame, which became very expensive with large amounts of objects. 
+		To quickly and significanlty improve the performance of the engine with many sprites, I could store the transforms and calculate positions, rotations and scales from that when needed, 
+		or cache the transforms, which was my initial plan.
+	</p>
+
+	<h3>
+		Engine - Physics
+	</h3>
+	<p>
+		All physics bodies are defined by axis aligned bounding boxes (AABBs). 
+		The algorithm for detecting whether two AABBs overlap used is the Seperating Axis Theorem (SAT), which checks if there is an overlap on each axis. 
+		Since we only have a collision if all axes overlap, we can early-out as soon as we find an axis where they do not overlap. 
+	</p>
+	<p>
+		To resolve collisions, I used the projection-based method, where the object is moved back directly by changing its position. 
+		The detection steps measures 4 overlap values in each direction, in this step I use those overlap measurements to find the direction with the smallest 
+		amount of overlap and move the dynamic object back in that direction by the overlap amount so that the objects no longer overlap.
+	</p>
+	<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #ae81ff">for</span> (<span style="color: #ae81ff">auto</span> [dEntity, dTrans, dAabb] : dynamicAABBs.<span style="color: #66d9ef">each</span>()) {
+	<span style="color: #ae81ff">for</span> (<span style="color: #ae81ff">auto</span> [sEntity, sTrans, sAabb] : staticAABBs.<span style="color: #66d9ef">each</span>()) {
+		<span style="color: #75715e">// COLLISION DETECTION
+		// Measure overlaps and early return if there is an edge with no overlap</span>
+		<span style="color: #ae81ff">if</span> ((overlaps[<span style="color: #ffbe21">0</span>] = dTrans.position.x + dAabb.extents.x - (sTrans.position.x - sAabb.extents.x)) < <span style="color: #ffbe21">0.0f</span>) { <span style="color: #ae81ff">continue</span>; }
+		<span style="color: #ae81ff">if</span> ((overlaps[<span style="color: #ffbe21">1</span>] = sTrans.position.x + sAabb.extents.x - (dTrans.position.x - dAabb.extents.x)) < <span style="color: #ffbe21">0.0f</span>) { <span style="color: #ae81ff">continue</span>; }
+		<span style="color: #ae81ff">if</span> ((overlaps[<span style="color: #ffbe21">2</span>] = dTrans.position.y + dAabb.extents.y - (sTrans.position.y - sAabb.extents.y)) < <span style="color: #ffbe21">0.0f</span>) { <span style="color: #ae81ff">continue</span>; }
+		<span style="color: #ae81ff">if</span> ((overlaps[<span style="color: #ffbe21">3</span>] = sTrans.position.y + sAabb.extents.y - (dTrans.position.y - dAabb.extents.y)) < <span style="color: #ffbe21">0.0f</span>) { <span style="color: #ae81ff">continue</span>; }
+
+		<span style="color: #75715e">// COLLISION RESPONSE
+		// If we get to this point, all edges have overlap and we know the AABBs overlap.
+		// Find edge with smallest overlap and move the dynamic object back on that edge so there is no more overlap.</span>
+		minDist = std::<span style="color: #ae81ff">numeric_limits</span><<span style="color: #ae81ff">float</span>>::<span style="color: #ae81ff">max</span>();
+
+		<span style="color: #ae81ff">for</span> (<span style="color: #ae81ff">int</span> i = <span style="color: #ffbe21">0</span>; i < <span style="color: #ffbe21">4</span>; ++i) {
+			<span style="color: #ae81ff">if</span> (minDist > overlaps[i]) {
+				minDist = overlaps[i];
+				projVecIndex = i;
+			}
+		}
+
+		<span style="color: #ae81ff">switch</span> (projVecIndex)
+		{
+		<span style="color: #ae81ff">case</span> <span style="color: #ffbe21">0</span>:
+			dTrans.position.x -= minDist;
+			break;
+		<span style="color: #ae81ff">case</span> <span style="color: #ffbe21">1</span>:
+			dTrans.position.x += minDist;
+			break;
+		<span style="color: #ae81ff">case</span> <span style="color: #ffbe21">2</span>:
+			dTrans.position.y -= minDist;
+			break;
+		<span style="color: #ae81ff">case</span> <span style="color: #ffbe21">3</span>:
+			dTrans.position.y += minDist;
+		}
+	}
+}</pre>
+	</div>
+	<p>
+		The simplicity of this algorithm is so effective, that even with 1000s of of AABBs and brute force collision detection, collision detection barely had an effect on performance. 
+		This is also in large part because the only dynamic object in my test game is the player character, and the system only performs dynamic vs static collision detection. 
+	</p>
+
+	<h3>
+		Engine - Entity Component System
+	</h3>
+	<p>
+		The architectural pattern I used to structure the game code is the Entity Component System. 
+		This is a data-oriented way to structure code, which can potentially improve performance significantly. 
+		For this I used a third-party library, EnTT, which is also used in Minecraft Bedrock Edition.
+	</p>
+	<p>
+		Unity DOTS uses archetype ECS, where each unique *set* of components belong to a specific archetype array. 
+		This method provides a fast look-up and general optimization on how the components are stored. 
+		Though it does add some extra cost to removing and adding components, as this changes the archetype it belongs to.
+	</p>
+	<p>
+		EnTT uses sparse set ECS, where each component *type* belongs to a specific component array. 
+		To find all sets of some specific components, we have to iterate all the components in one of the component arrays and check against the other arrays,
+		 which is much less optimal that archetype ECS. However, with sparse set ECS we have the ability to optimize for specific groups based on where we find bottlenecks. 
+		 We can do this by sorting components that belong to those groups so that they are always together at the front of the array. 
+		 So EnTT lets us optimize access to the most performance-critical sets of components.
+	</p>
+	<p>
+		Using ECS turned out to work really well with naturally making big engine-related systems such as sprite rendering and physics, and made it very easy to reason about the order of different systems. 
+	</p>
+
 
 	</div>
 </div>

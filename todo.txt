@@ -59,9 +59,11 @@
 http://hilite.me/
 [C++, monokai]
 
-built-in Keywords & types: blue #ae81ff
-User-defined functions & types: blue #66d9ef
-Literal values: Orange #ffbe21
-Unused: Pink #f92672
+Code snippet: <div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+built-in Keywords & types: <span style="color: #ae81ff">
+User-defined functions & types: <span style="color: #66d9ef">
+Literal values: <span style="color: #ffbe21">
+Comments: <span style="color: #75715e">
+Unused: <span style="color: #f92672">
 
 https://youtu.be/G3e-cpL7ofc?si=ylCYac5eHZYD_TMa&t=1063

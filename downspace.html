@@ -112,7 +112,7 @@
 			This depends on if the button was pressed and not held, if the player is grounded, coyote time 
 			(a short time frame after leaving the ground where we can still jump), and if the player has bullets.
 		</p>
-		<!-- HTML generated using hilite.me --><div class="code"><pre style="margin: 0; line-height: 125%"><span style="color: #ae81ff">bool</span> <span style="color: #66d9ef">ComponentFootContact</span>::<span style="color: #66d9ef">CanJump</span>() {
+		<!-- HTML generated using hilite.me --><div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #ae81ff">bool</span> <span style="color: #66d9ef">ComponentFootContact</span>::<span style="color: #66d9ef">CanJump</span>() {
 	<span style="color: #ae81ff">bool</span> coyote = 
 		(<span style="color: #66d9ef">MyEngine</span>::<span style="color: #66d9ef">Engine</span>::<span style="color: #66d9ef">GetInstance</span>()-&gt;<span style="color: #66d9ef">GetTime</span>() - _lastGroundedTime)
 		&lt; _coyoteTime;
@@ -203,7 +203,7 @@
 				<p>
 					The sprite renderer receives a sprite batch builder that it can add its sprite to.
 				</p>
-					<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #ae81ff">void</span> <span style="color: #66d9ef">ComponentRendererSprite</span>::<span style="color: #66d9ef">Render</span>(sre::<span style="color: #66d9ef">SpriteBatch</span>::<span style="color: #66d9ef">SpriteBatchBuilder</span>&amp; builder) {
+					<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #ae81ff">void</span> <span style="color: #66d9ef">ComponentRendererSprite</span>::<span style="color: #66d9ef">Render</span>(sre::<span style="color: #66d9ef">SpriteBatch</span>::<span style="color: #66d9ef">SpriteBatchBuilder</span>&amp; builder) {
 	<span style="color: #ae81ff">if</span> (!_isActive) <span style="color: #ae81ff">return</span>;
 	<span style="color: #ae81ff">auto</span> gameObject = <span style="color: #66d9ef">GetGameObject</span>().<span style="color: #ae81ff">lock</span>();
 	<span style="color: #ae81ff">if</span> (!gameObject) <span style="color: #ae81ff">return</span>;
@@ -216,7 +216,7 @@
 				<p>
 					The engine's render loop uses the batch builder to render all the sprites in just one drawcall.
 				</p>
-									<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #ae81ff">void</span> <span style="color: #66d9ef">Engine</span>::<span style="color: #66d9ef">Render</span>() {
+									<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%; tab-size: 4;"><span style="color: #ae81ff">void</span> <span style="color: #66d9ef">Engine</span>::<span style="color: #66d9ef">Render</span>() {
 	sre::<span style="color: #66d9ef">RenderPass</span> renderPass = sre::<span style="color: #66d9ef">RenderPass</span>::<span style="color: #66d9ef">create</span>()
 		.<span style="color: #66d9ef">withCamera</span>(_camera)
 		.<span style="color: #66d9ef">withClearColor</span>(<span style="color: #ae81ff">true</span>, _backgroundColor)
