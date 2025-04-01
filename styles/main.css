@@ -240,7 +240,7 @@ blockquote {
 	text-align: center;
 	padding-top: 15px;
 	padding-bottom: 15px;
-	position: absolute;
+	position: relative;
 	bottom: 0;
 	width: 100%;
 	cursor: pointer;
@@ -300,9 +300,8 @@ blockquote {
 	font-size: 12px;
 	padding-top: 8px;
 	padding-bottom: 8px;
-	position: absolute;
+	position: relative;
 	bottom: 0;
-	margin-top: 20px;
 	width: 100%;
 	cursor: pointer;
 }
@@ -382,12 +381,6 @@ blockquote {
 	border-color: var(--bg2);
 }
 
-/* For text highlighting: <span style="color: #ae81ff"> */
-/* Comments: #75715e */
-/* built-in keywords: #ae81ff */
-/* user-defined keywords: #66d9ef */
-/* Literal values: #ffbe21 */
-/* Unused: #f92672 */
 .code {
 	border:solid gray;
 	background: #272822;
@@ -396,4 +389,30 @@ blockquote {
 	width:auto;
 	border-width:.1em .1em .1em .8em;
 	padding:.2em .6em;
+}
+
+@media (max-width: 1400px) {
+	.project-preview-container {
+		display: flex;
+		flex-direction: column;
+		border-spacing: 10px;
+		margin-top: 45px;
+		margin-bottom: 35px;
+		gap: 20px;
+	}
+	.project-preview {
+		max-width: 100%;
+		padding: 10px;
+		height: auto;
+	}
+	.preview-image {
+		display: block;
+		max-width: 80%;
+		margin: auto;
+	}
+	.project-preview-small {
+		max-width: 100%;
+		padding: 10px;
+		height: auto;
+	}
 }
