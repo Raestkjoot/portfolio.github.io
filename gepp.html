@@ -36,7 +36,7 @@
 	<header>
 		<div>
 			<h1>Gunnar Magnussen</h1>
-			<p class="sub-title"><b>Game Programmer</b> | Gameplay, graphics and general game development.</p>
+			<p class="sub-title"><b>Gameplay Programmer</b> | Game feel, physics, graphics and systems</p>
 		</div>
 		<div class="nav">
 			<a class="header-button" href="index.html"> Projects </a>
@@ -360,7 +360,7 @@
 	<p>
 		EnTT uses sparse set ECS, where each component *type* belongs to a specific component array. 
 		To find all sets of some specific components, we have to iterate all the components in one of the component arrays and check against the other arrays,
-		 which is much less optimal that archetype ECS. However, with sparse set ECS we have the ability to optimize for specific groups based on where we find bottlenecks. 
+		 which is much less optimal than archetype ECS. However, with sparse set ECS we have the ability to optimize for specific groups based on where we find bottlenecks. 
 		 We can do this by sorting components that belong to those groups so that they are always together at the front of the array. 
 		 So EnTT lets us optimize access to the most performance-critical sets of components.
 	</p>

@@ -36,7 +36,7 @@
 	<header>
 		<div>
 			<h1>Gunnar Magnussen</h1>
-			<p class="sub-title"><b>Game Programmer</b> | Gameplay, graphics and general game development.</p>
+			<p class="sub-title"><b>Gameplay Programmer</b> | Game feel, physics, graphics and systems</p>
 		</div>
 		<div class="nav">
 			<a class="header-button" href="index.html"> Projects </a>
@@ -67,7 +67,7 @@
 				</i>
 				<i>
 					<span class="material-symbols-outlined">list</span>
-					&nbsp;<b>Tasks:</b>&nbsp; Weapon System | GAS | 3D Math | Networking
+					&nbsp;<b>Tasks:</b>&nbsp; Aiming | Weapon System | Multiplayer
 				</i>
 				<i>
 					<span class="material-symbols-outlined">groups</span>
@@ -79,21 +79,64 @@
 					| <a class="links-button" href="https://darkswarm.com/" target="_blank">Game Website</a>
 				</i>
 				<i>
-					I am currently interning at Bitfire Games to rework the weapon system from a prototype state to a polished long-term system enabling all the cool design ambitions.
-					It is an interesting challenge to get 2D input to work with aiming in a 3D world with an isometric perspective. 
-					I'm also implementing shooting with many different types of weapons that can have different modifications.
-					We use Unreal's Gameplay Ability System (GAS). The game has online co-op, so we also need to account for networking.
+					My task at Bitfire was to rework the existing aiming and weapon system to allow for all their future weapon plans, get the aiming to feel just right in every situation, and optimize it to work with more enemies.
+					The aiming system had to take 2D input and translate it to a target in 3D space, which felt right to the player.
+					The weapon system is highly modular, is replicated in a client-server architecture, and uses Unreal's Gameplay Ability System for abilities and interactions.
 				</i>
 			</div>
 		</div>
+		<p>
+			<b>Note:</b> This project is still ongoing, so these are preliminary explanations and some detail may be lacking.
+		</p>
 		<hr />
 
-		<!-- TOPIC -->
+		<!-- AIMING -->
 		<h2>
-			TODO
+			Aiming
 		</h2>
 		<p>
-			This is a current project and part of my thesis, which I will hand in in June. Until then, this page is just going to be like this. Kind of empty...
+			The gameplay is classic twin-stick shooter gameplay, where the aim input is a 2D direction. 
+			DarkSwarm sets itself appart with its 3D environment with varying height, so the player can aim up and down. 
+			This is a tricky thing to get right, and I was tasked with figuring it out.
+		</p>
+		<p>
+			It required thinking in two different coordinate systems, that of the 3D world, and that of the player's 2D window into the world. 
+		</p>
+		<div class="project-image-container">
+			<img src="images/darkswarm-aim-persp0.jpg" class="project-image"/>
+			<img src="images/darkswarm-aim-persp1.jpg" class="project-image"/>
+		</div>
+		<div class="project-image-container">
+		<img src="images/darkswarm-aim-top0.jpg" class="project-image"/>
+		<img src="images/darkswarm-aim-top1.jpg" class="project-image"/>
+	</div>
+	<p>
+		Getting to the solution that felt just right to players was an iterative process involving multiple playtests with the team and working in my own testbed level to iron out all edge cases.
+	</p>
+
+		<hr />
+
+		<!-- WEAPON SYSTEM -->
+		<h2>
+			Weapon System
+		</h2>
+		<p>
+			The weapon system is built to be modular. For example, projectiles can be easily swapped out and different components such as scopes and flashlights can be added to different weapons.
+			Using Unreal's Data Assets, the weapon stats are easy for the designers to tweak. Some parts are inspired by Unreal's Lyra project, but tailored to DarkSwarm's specific needs.
+		</p>
+		<p>
+			Using Unreal's Gameplay Ability System (GAS), allows us to create complex interactions. For example, weapon fire can be blocked by tags such as 'Downed' or 'Trapped'.
+			GAS also lets each weapon behave in completely unique ways, by granting the player a different set of abilities.
+		</p>
+		<hr />
+
+		<!-- MULTIPLAYER -->
+		<h2>
+			Multiplayer
+		</h2>
+		<p>
+			DarkSwarm is a co-op focused game and uses a client-server networking architecture. 
+			The server is authoritative, so important events are sent to the server, that then replicates valid events to all clients.
 		</p>
 
 	</div>
