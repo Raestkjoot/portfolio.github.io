@@ -58,6 +58,11 @@ i {
 	margin-left: 0px;
 	font-style: normal;
 	font-size: 18px;
+	padding-left: 5px;
+}
+
+li::marker {
+	font-size: 2em;
 }
 
 summary {
