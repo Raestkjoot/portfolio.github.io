@@ -51,7 +51,7 @@
 		<h1>DarkSwarm</h1>
 		<div class="project-overview">
 			<div class="project-overview-elem">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/yWFzBAguvVA?si=-pQ8npz7zCAiqwuL" title="YouTube video player" frameborder="0"
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/smRHsBm5_F4?si=-ow2-7KfXmJ3kDMe" title="YouTube video player" frameborder="0" 
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
 					referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
 				</iframe>
@@ -77,6 +77,7 @@
 					<span class="material-symbols-outlined">link</span>
 					&nbsp;<b>Links:</b>&nbsp; <a class="links-button" href="https://store.steampowered.com/app/2303200/DarkSwarm/" target="_blank">Steam Page</a>
 					| <a class="links-button" href="https://darkswarm.com/" target="_blank">Game Website</a>
+					| <a class="links-button" href="https://www.youtube.com/watch?v=yWFzBAguvVA" target="_blank">Trailer</a>
 				</i>
 				<i>
 					My task at Bitfire was to rework the existing aiming and weapon system to allow for all their future weapon plans, get the aiming to feel just right in every situation, and optimize it to work with more enemies.
@@ -85,9 +86,9 @@
 				</i>
 			</div>
 		</div>
-		<p>
-			<b>Note:</b> This project is still ongoing, so these are preliminary explanations and some detail may be lacking.
-		</p>
+
+		Everything shared here is done so with express permission from BitFire Games.
+
 		<hr />
 
 		<!-- AIMING -->
@@ -95,24 +96,89 @@
 			Aiming
 		</h2>
 		<p>
-			The gameplay is classic twin-stick shooter gameplay, where the aim input is a 2D direction. 
-			DarkSwarm sets itself appart with its 3D environment with varying height, so the player can aim up and down. 
-			This is a tricky thing to get right, and I was tasked with figuring it out.
+			The aiming system in DarkSwarm takes a 2D input direction and translates it into a 3D aim direction.
+			Classical twin-stick shooters directly map input to aim direction. DarkSwarm, however, has a completely 3D environment, 
+			and I was tasked with making the aiming system work in 3 dimensions in a way that would feel intuitive and fun to players.
 		</p>
 		<p>
-			It required thinking in two different coordinate systems, that of the 3D world, and that of the player's 2D window into the world. 
+			The solution requires thinking in two different coordinate systems: that of the 3D world, and that of the player's 2D window into the world.
+			A direction that looks like it might hit a target from one perspective might completely miss from another perspective, since the y-axis of the window represents both the y and the z-axis of the game world.
 		</p>
 		<div class="project-image-container">
-			<img src="images/darkswarm-aim-persp0.jpg" class="project-image"/>
-			<img src="images/darkswarm-aim-persp1.jpg" class="project-image"/>
+			<img src="images/darkswarm-topdown.jpg" class="project-image"/>
+			<img src="images/darkswarm-topdown-rotated.jpg" class="project-image"/>
 		</div>
-		<div class="project-image-container">
-		<img src="images/darkswarm-aim-top0.jpg" class="project-image"/>
-		<img src="images/darkswarm-aim-top1.jpg" class="project-image"/>
-	</div>
-	<p>
-		Getting to the solution that felt just right to players was an iterative process involving multiple playtests with the team and working in my own testbed level to iron out all edge cases.
-	</p>
+		<p>
+			To transform the 2D input direction to a higher dimension, we construct a 3D aim plane based on the player's input and view direction.
+			Within this plane we can aim at any point and it will look like the same direction from the player's perspective.
+		</p>
+		<img src="images/darkswarm-aimplane.png" class="project-image"/>
+		<p>
+			This aim plane is used to find potential targets and then finally output a 3D aim direction.
+		</p>
+		<img src="images/darkswarm-aim-input-output.png" class="project-image" style="height: 400px"/>
+		<p>
+			To find potential targets, we do a capsule sweep in the direction and orientation of the aim plane.
+		</p>
+		<!-- CODE EXAMPLE: Find potential targets -->
+		<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #ae81ff">void</span> <span style="color: #66d9ef">UDS_AimingComponent</span>::<span style="color: #66d9ef">FindPotentialTargets</span>(<span style="color: #66d9ef">TArray</span><<span style="color: #66d9ef">FHitResult</span>>& OutTargets)
+{
+	<span style="color: #66d9ef">FCollisionQueryParams</span> Params;
+	Params.bIgnoreBlocks = <span style="color: #ffbe21">true</span>;
+	Params.bTraceComplex = <span style="color: #ffbe21">false</span>;
+
+	<span style="color: #66d9ef">FVector</span> TraceEnd = AimOriginLocation + InputDirection * MaxAimDistance;
+	<span style="color: #66d9ef">FQuat</span> TraceCapsuleOrientation = <span style="color: #66d9ef">CameraDirection</span>.<span style="color: #66d9ef">ToOrientationQuat</span>().<span style="color: #66d9ef">GetUpVector</span>().<span style="color: #66d9ef">ToOrientationQuat</span>();
+
+	<span style="color: #66d9ef">GetWorld</span>()-><span style="color: #66d9ef">SweepMultiByObjectType</span>(
+		OutTargets, 
+		AimOriginLocation, TraceEnd, 
+		TraceCapsuleOrientation, TargetsObjectParams, CollisionShape, Params);
+}
+		</pre></div>
+		<p>
+			To find the location on the target's collision capsule that the system should aim towards, we think about the first and last point the aim plane will intersect as the player aims across the target.
+		</p>
+		<img src="images/darkswarm-aimplane-intersection.png" class="project-image"/>
+		<!-- CODE EXAMPLE: Find aim location on target capsule -->
+		<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #66d9ef">FVector</span> <span style="color: #66d9ef">UDS_AimingComponent</span>::<span style="color: #66d9ef">FindAimLocationOnTargetCapsule</span>(<span style="color: #ae81ff">const</span> <span style="color: #66d9ef">FHitResult</span>& Target)
+{
+	<span style="color: #75715e">// find bottom and top half-height of cylinder</span>
+	<span style="color: #66d9ef">UCapsuleComponent</span>* EnemyCapsule = Target.<span style="color: #66d9ef">GetActor</span>()-><span style="color: #66d9ef">GetComponentByClass</span><<span style="color: #66d9ef">UCapsuleComponent</span>>();
+	<span style="color: #66d9ef">FVector</span> TargetCenter = Target.<span style="color: #66d9ef">GetActor</span>()-><span style="color: #66d9ef">GetActorLocation</span>();
+	<span style="color: #ae81ff">float</span> CylinderHalfHeight = EnemyCapsule-><span style="color: #66d9ef">GetScaledCapsuleHalfHeight</span>() - EnemyCapsule-><span style="color: #66d9ef">GetScaledCapsuleRadius</span>();
+	<span style="color: #66d9ef">FVector</span> CapsuleEndA = TargetCenter + <span style="color: #66d9ef">FVector</span>::UpVector * CylinderHalfHeight;
+	<span style="color: #66d9ef">FVector</span> CapsuleEndB = TargetCenter - <span style="color: #66d9ef">FVector</span>::UpVector * CylinderHalfHeight;
+
+	<span style="color: #75715e">// Add radius in the direction of the aim plane normal</span>
+	<span style="color: #66d9ef">FVector</span> AimPlaneUpVector = <span style="color: #66d9ef">FVector</span>::<span style="color: #66d9ef">CrossProduct</span>(InputDirection, CameraDirection).<span style="color: #66d9ef">GetSafeNormal</span>();
+	<span style="color: #66d9ef">FVector</span> RadDir = AimPlaneUpVector * EnemyCapsule-><span style="color: #66d9ef">GetScaledCapsuleRadius</span>();
+
+	<span style="color: #ae81ff">if</span> (RadDir.Z > <span style="color: #ffbe21">0.0f</span>)
+	{
+		CapsuleEndA += RadDir;
+		CapsuleEndB -= RadDir;
+	}
+	<span style="color: #ae81ff">else</span>
+	{
+		CapsuleEndA -= RadDir;
+		CapsuleEndB += RadDir;
+	}
+
+	<span style="color: #75715e">// Find the endpoints A-B vector's intersection point with the aim plane</span>
+	<span style="color: #66d9ef">FVector</span> CapsuleAimRay = CapsuleEndB - CapsuleEndA;
+
+	<span style="color: #ae81ff">return</span> <span style="color: #66d9ef">FMath</span>::<span style="color: #66d9ef">RayPlaneIntersection</span>(CapsuleEndA, CapsuleAimRay, <span style="color: #66d9ef">FPlane</span>(AimOriginLocation, AimPlaneUpVector));
+}
+		</pre></div>
+
+
+		<p>
+			There are many more functions to account for different input types, line of sight, prioritizing targets, etc.
+			Getting to the solution that felt just right to players was an iterative process involving multiple playtests with the team, constant dialogue with designers and animators, and working in a testbed level I created to test and iron out all edge cases.
+		</p>
 
 		<hr />
 
@@ -128,6 +194,13 @@
 			Using Unreal's Gameplay Ability System (GAS), allows us to create complex interactions. For example, weapon fire can be blocked by tags such as 'Downed' or 'Trapped'.
 			GAS also lets each weapon behave in completely unique ways, by granting the player a different set of abilities.
 		</p>
+		<p>
+			I build an inventory component for the player character to handle what weapons are currently equipped. The inventory uses an asset manager to make sure we only load the necessary weapons.
+		</p>
+		<p>
+			To design this system I set up and held meetings with the rest of the tech team and was in dialogue with the designers about what they wanted and how to best accomodate their workflows. 
+		</p>
+		<img src="images/darkswarm-weapon-system-uml.png" class="project-image" style="height: 480px"/>
 		<hr />
 
 		<!-- MULTIPLAYER -->
@@ -138,7 +211,36 @@
 			DarkSwarm is a co-op focused game and uses a client-server networking architecture. 
 			The server is authoritative, so important events are sent to the server, that then replicates valid events to all clients.
 		</p>
+		<img src="images/darkswarm-shoot-multiplayer-sequence.png" class="project-image" style="height: 280px"/>
+		<p>
+			This means that the server is always ahead of the clients. To make the game feel responsive to players on client machines, we have to predict the outcome.
+			This is mostly handled by GAS, but things such as spawning projectiles would require custom prediction logic.
+		</p>
+		<p>
+			Everything I worked on had to work in a multiplayer setting: The aim system replicates the aim direction, and the weapon system replicates what weapon is equipped and the attacks with those weapons.
+		</p>
 
+		<!-- CODE EXAMPLE: RPC functions -->
+		<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #75715e">// RPC functions in a weapon system header file</span>
+<span style="color: #ae81ff">public</span>:
+	<span style="color: #66d9ef">UFUNCTION</span>(Server, Reliable)
+	<span style="color: #ae81ff">void</span> Server_BeginAttack();
+	<span style="color: #66d9ef">UFUNCTION</span>(NetMulticast, Reliable)
+	<span style="color: #ae81ff">void</span> NetMulti_BeginAttack();
+	</pre></div>
+
+	<!-- CODE EXAMPLE: Replicated properties -->
+<div class="code"><pre style="margin: 0; line-height: 125%; tab-size: 4;">
+<span style="color: #75715e">// Replicated properties setup in the aiming system</span>
+<span style="color: #ae81ff">void</span> <span style="color: #66d9ef">UDS_AimingComponent</span>::<span style="color: #66d9ef">GetLifetimeReplicatedProps</span>(<span style="color: #66d9ef">TArray</span><<span style="color: #66d9ef">FLifetimeProperty</span>>& OutLifetimeProps) <span style="color: #ae81ff">const</span>
+{
+	<span style="color: #ae81ff">Super</span>::<span style="color: #66d9ef">GetLifetimeReplicatedProps</span>(OutLifetimeProps);
+
+	<span style="color: #66d9ef">DOREPLIFETIME</span>(<span style="color: #66d9ef">UDS_AimingComponent</span>, AimLocation);
+	<span style="color: #66d9ef">DOREPLIFETIME</span>(<span style="color: #66d9ef">UDS_AimingComponent</span>, AimOriginLocation);
+}
+</pre></div>
 	</div>
 </div>
 
